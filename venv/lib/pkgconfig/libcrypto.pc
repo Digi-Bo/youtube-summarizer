@@ -1,0 +1,11 @@
+libdir=/Users/fanchdaniel/mes_documents/dev/gen-ai-gemini/youtube-summarizer/venv/lib
+includedir=/Users/fanchdaniel/mes_documents/dev/gen-ai-gemini/youtube-summarizer/venv/include
+enginesdir=/Users/fanchdaniel/mes_documents/dev/gen-ai-gemini/youtube-summarizer/venv/lib/engines-3
+modulesdir=/Users/fanchdaniel/mes_documents/dev/gen-ai-gemini/youtube-summarizer/venv/lib/ossl-modules
+
+Name: OpenSSL-libcrypto
+Description: OpenSSL cryptography library
+Version: 3.3.1
+Libs: -L${libdir} -lcrypto
+Libs.private: 
+Cflags: -I${includedir}

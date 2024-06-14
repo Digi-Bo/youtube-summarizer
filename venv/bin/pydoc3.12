@@ -1,0 +1,5 @@
+#!/Users/fanchdaniel/mes_documents/dev/gen-ai-gemini/youtube-summarizer/venv/bin/python3.12
+
+import pydoc
+if __name__ == '__main__':
+    pydoc.cli()
