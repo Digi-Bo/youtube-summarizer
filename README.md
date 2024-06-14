@@ -404,8 +404,6 @@ Le projet "Transcripteur de vidéos YouTube" offre une solution complète pour l
   - Affichage de l'image miniature de la vidéo pour confirmation visuelle.
   - Bouton pour obtenir les notes détaillées, déclenchant l'extraction de la transcription, la génération de contenu, et l'affichage des notes détaillées dans l'application Streamlit.
 
-Ces fonctionnalités permettent aux utilisateurs de transformer efficacement les vidéos YouTube en notes détaillées et résumées, facilitant ainsi l'analyse et la compréhension du contenu vidéo. Le projet combine des techniques avancées d'extraction de données et de génération de contenu, offrant une solution puissante et conviviale.
-
 
 
 
