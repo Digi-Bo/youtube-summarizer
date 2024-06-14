@@ -2,13 +2,50 @@
 
 ## 1 - Présentation du projet
 
-**Nom du projet :** Transcripteur de vidéos YouTube
+**Nom du projet :** Transcripteur de vidéos YouTube avec traduction en français
 
 **Objectif :** Extraire automatiquement le texte des vidéos YouTube
 
 Le projet "Transcripteur de vidéos YouTube" vise à simplifier le processus d'extraction de texte à partir de vidéos YouTube. En fournissant simplement le lien d'une vidéo, l'application sera capable de récupérer automatiquement la transcription complète. Cette fonctionnalité est particulièrement utile pour les créateurs de contenu, les chercheurs et toute personne souhaitant analyser le contenu des vidéos de manière textuelle. 
 
 Dans cette documentation, nous allons détailler chaque étape du développement de ce projet, des configurations initiales à l'implémentation des fonctionnalités clés, en passant par l'intégration d'interfaces utilisateur conviviales.
+
+
+**Pour démarrer l'application en local :**
+
+```
+streamlit run app.py
+```
+
+**Fermer l'app streamlit :**
+```
+ctrl + c
+```
+
+
+### Résumé des fonctionnalités développées
+
+* **Création de l'environnement :**
+  - Utilisation de Conda pour créer un environnement isolé avec Python 3.12
+  - Création des fichiers nécessaires (.env, requirements.txt, app.py) pour organiser le projet.
+
+* **Configuration des variables d'environnement :**
+  - Définition de la clé API Google dans le fichier `.env` pour sécuriser les informations sensibles.
+  - Chargement des variables d'environnement dans le code à l'aide de `python-dotenv`.
+
+* **Extraction de la transcription YouTube :**
+  - Utilisation de `YouTube transcript API` pour récupérer l'ID de la vidéo à partir de l'URL YouTube.
+  - Extraction de la transcription sous forme de texte.
+  - Gestion des exceptions pour les vidéos privées ou non accessibles, assurant une expérience utilisateur robuste.
+
+* **Implémentation de la génération de contenu avec Google Gemini :**
+  - Configuration de l'API Google generative AI.
+  - Création d'une fonction pour générer du contenu, incluant la définition du prompt, l'intégration de la transcription, et la récupération de la réponse du modèle.
+
+* **Interface utilisateur avec Streamlit :**
+  - Création d'une interface intuitive avec un titre et un champ de saisie pour l'URL de la vidéo YouTube.
+  - Affichage de l'image miniature de la vidéo pour confirmation visuelle.
+  - Bouton pour obtenir les notes détaillées, déclenchant l'extraction de la transcription, la génération de contenu, et l'affichage des notes détaillées dans l'application Streamlit.
 
 
 
@@ -29,7 +66,7 @@ le ```-p``` signifie que l'environnement est personnalisé et est associé au do
   
 Comme l'environement est stocké dans le dossier, il faut l'indiquer quand on active l'environnement
 ```
-conda activate /Users/fanchdaniel/mes_documents/dev/gen-ai-gemini/youtube-summarizer/venv
+conda activate /Users/chemin_d_acces_vers_le_dossier/youtube-summarizer/venv
 ```
 
 
@@ -183,9 +220,7 @@ genai.configure(api_key=api_key)
   Nous devons définir un prompt clair et précis pour le modèle afin d'obtenir un résumé efficace de la transcription de la vidéo YouTube. Voici un exemple de prompt :
 
   ```python
-  prompt = """You are a YouTube video summarizer. You will take the transcript text
-  and summarize the entire video, providing the important points in 250 words. 
-  Please provide the summary of the text given here: """
+  prompt =  """Tu es un spécialiste en résumé de vidéos YouTube.  Tu vas prendre le texte de la transcription et résumer l'ensemble de la vidéo, en fournissant les points importants en 250 mots. Donne moi le résumé du texte donné ici : """
   ```
 
 * **Intégration de la transcription dans le prompt :**
@@ -214,10 +249,10 @@ genai.configure(api_key=api_key)
   load_dotenv()  # Charger les variables d'environnement
 
   # Titre de l'application Streamlit
-  st.title("YouTube Transcript to Detailed Notes Converter")
+  st.title("Convertisseur de transcription YouTube en notes détaillées")
 
   # Saisie de l'URL de la vidéo YouTube
-  youtube_link = st.text_input("Enter YouTube Video Link:")
+  youtube_link = st.text_input("Entrez le lien de la vidéo YouTube :")
 
   if youtube_link:
       video_id = get_video_id(youtube_link)
@@ -288,6 +323,9 @@ genai.configure(api_key=api_key)
 
 Cette interface utilisateur Streamlit permet aux utilisateurs de saisir l'URL d'une vidéo YouTube, de voir l'image miniature de la vidéo et d'obtenir un résumé détaillé de la transcription de la vidéo en quelques clics seulement. Le code complet pour l'interface utilisateur avec Streamlit est le suivant :
 
+
+
+
 ```python
 import streamlit as st
 from dotenv import load_dotenv
@@ -295,59 +333,65 @@ import os
 import google.generativeai as genai
 from youtube_transcript_api import YouTubeTranscriptApi
 
-# Charger les variables d'environnement
+# Charger les variables d'environnement à partir du fichier .env
 load_dotenv()
 
-# Configuration de l'API Google generative AI
+# Récupérer la clé API de Google depuis les variables d'environnement
 api_key = os.getenv("GOOGLE_API_KEY")
+
+# Configurer l'API Google generative AI avec la clé API
 genai.configure(api_key=api_key)
 
-# Définition du prompt pour le modèle de génération de contenu
-prompt = """You are a YouTube video summarizer. You will take the transcript text
-and summarize the entire video, providing the important points in 250 words.
-Please provide the summary of the text given here: """
+# Définir le prompt pour le modèle de génération de contenu
+prompt = """Tu es un spécialiste en résumé de vidéos YouTube. Tu vas prendre le texte de la transcription et résumer l'ensemble de la vidéo, en fournissant les points importants en 250 mots. Donne moi le résumé du texte donné ici : """
 
-# Fonctions auxiliaires
+# Fonction pour obtenir l'ID de la vidéo à partir de l'URL YouTube
 def get_video_id(youtube_url):
     try:
+        # Extraire l'ID de la vidéo de l'URL
         video_id = youtube_url.split("=")[1]
         return video_id
     except IndexError:
+        # Gérer les erreurs d'URL invalide
         raise ValueError("URL YouTube invalide.")
 
+# Fonction pour extraire la transcription de la vidéo à partir de l'ID de la vidéo
 def extract_transcript(video_id):
     try:
+        # Utiliser l'API YouTube Transcript pour obtenir la transcription
         transcript_list = YouTubeTranscriptApi.get_transcript(video_id)
+        # Convertir la transcription en texte
         transcript_text = " ".join([item['text'] for item in transcript_list])
         return transcript_text
     except Exception as e:
+        # Gérer les erreurs d'extraction de la transcription
         raise RuntimeError(f"Erreur lors de l'extraction de la transcription : {e}")
 
+# Fonction pour extraire les détails de la transcription à partir de l'URL YouTube
 def extract_transcript_details(youtube_video_url):
     try:
-        # Récupération de l'ID de la vidéo
+        # Obtenir l'ID de la vidéo
         video_id = get_video_id(youtube_video_url)
-        
-        # Extraction de la transcription
+        # Extraire la transcription
         transcript_text = extract_transcript(video_id)
-        
         return transcript_text
-    
     except ValueError as ve:
+        # Afficher une erreur pour une URL invalide
         st.error(f"Erreur d'URL : {ve}")
     except RuntimeError as re:
+        # Afficher une erreur pour une erreur d'extraction
         st.error(f"Erreur de transcription : {re}")
     except Exception as e:
+        # Afficher une erreur pour toute autre erreur
         st.error(f"Erreur inattendue : {e}")
 
+# Fonction pour générer le contenu résumé avec Google Gemini
 def generate_gemini_content(transcript_text, prompt):
-    # Combinaison du prompt et de la transcription
+    # Combiner le prompt et la transcription
     full_prompt = prompt + transcript_text
-    
-    # Utilisation du modèle pour générer le contenu
+    # Utiliser le modèle pour générer le contenu
     model = genai.GenerativeModel("gemini-pro")
     response = model.generate_content(full_prompt)
-    
     return response.text
 
 # Interface utilisateur avec Streamlit
@@ -357,52 +401,82 @@ st.title("Convertisseur de transcription YouTube en notes détaillées")
 youtube_link = st.text_input("Entrez le lien de la vidéo YouTube :")
 
 if youtube_link:
+    # Obtenir l'ID de la vidéo et afficher l'image miniature
     video_id = get_video_id(youtube_link)
     st.image(f"http://img.youtube.com/vi/{video_id}/0.jpg", use_column_width=True)
 
 if st.button("Obtenir les notes détaillées"):
     try:
-        # Extraction de la transcription
+        # Extraire la transcription de la vidéo
         transcript_text = extract_transcript_details(youtube_link)
 
         if transcript_text:
-            # Génération des notes détaillées avec Google Gemini
+            # Générer les notes détaillées avec Google Gemini
             summary = generate_gemini_content(transcript_text, prompt)
 
-            # Affichage des notes détaillées
+            # Afficher les notes détaillées
             st.markdown("## Notes détaillées :")
             st.write(summary)
     except Exception as e:
+        # Afficher une erreur en cas de problème
         st.error(f"Erreur : {e}")
 ```
 
+### Explications étape par étape
+
+1. **Importer les bibliothèques nécessaires :**
+   - `streamlit` pour l'interface utilisateur.
+   - `dotenv` pour charger les variables d'environnement.
+   - `os` pour accéder aux variables d'environnement.
+   - `google.generativeai` pour utiliser l'API Google generative AI.
+   - `youtube_transcript_api` pour extraire les transcriptions des vidéos YouTube.
+
+2. **Charger les variables d'environnement :**
+   - Utilisez `load_dotenv()` pour charger les variables d'environnement depuis le fichier `.env`.
+
+3. **Configurer l'API Google generative AI :**
+   - Récupérez la clé API de Google depuis les variables d'environnement.
+   - Configurez l'API avec la clé récupérée.
+
+4. **Définir le prompt :**
+   - Définissez un prompt qui sera utilisé pour générer le contenu résumé à partir de la transcription.
+
+5. **Fonction `get_video_id` :**
+   - Extrait l'ID de la vidéo de l'URL YouTube.
+   - Gère les erreurs d'URL invalide.
+
+6. **Fonction `extract_transcript` :**
+   - Utilise l'API YouTube Transcript pour obtenir la transcription de la vidéo.
+   - Convertit la transcription en un texte continu.
+   - Gère les erreurs d'extraction.
+
+7. **Fonction `extract_transcript_details` :**
+   - Combine les fonctions précédentes pour extraire les détails de la transcription à partir de l'URL YouTube.
+   - Gère différentes erreurs et affiche des messages appropriés.
+
+8. **Fonction `generate_gemini_content` :**
+   - Combine le prompt et la transcription.
+   - Utilise le modèle Google generative AI pour générer un résumé du contenu.
+
+9. **Interface utilisateur avec Streamlit :**
+   - Affiche un titre et un champ de saisie pour l'URL de la vidéo YouTube.
+   - Affiche l'image miniature de la vidéo.
+   - Génère et affiche les notes détaillées lors du clic sur le bouton.
 
 
-### Conclusion : Résumé des fonctionnalités développées
 
-Le projet "Transcripteur de vidéos YouTube" offre une solution complète pour l'extraction automatique et la génération de résumés de transcriptions de vidéos YouTube. Voici un résumé des fonctionnalités développées :
 
-* **Création de l'environnement :**
-  - Utilisation de Conda pour créer un environnement isolé avec Python 3.12
-  - Création des fichiers nécessaires (.env, requirements.txt, app.py) pour organiser le projet.
 
-* **Configuration des variables d'environnement :**
-  - Définition de la clé API Google dans le fichier `.env` pour sécuriser les informations sensibles.
-  - Chargement des variables d'environnement dans le code à l'aide de `python-dotenv`.
 
-* **Extraction de la transcription YouTube :**
-  - Utilisation de `YouTube transcript API` pour récupérer l'ID de la vidéo à partir de l'URL YouTube.
-  - Extraction de la transcription sous forme de texte.
-  - Gestion des exceptions pour les vidéos privées ou non accessibles, assurant une expérience utilisateur robuste.
 
-* **Implémentation de la génération de contenu avec Google Gemini :**
-  - Configuration de l'API Google generative AI.
-  - Création d'une fonction pour générer du contenu, incluant la définition du prompt, l'intégration de la transcription, et la récupération de la réponse du modèle.
 
-* **Interface utilisateur avec Streamlit :**
-  - Création d'une interface intuitive avec un titre et un champ de saisie pour l'URL de la vidéo YouTube.
-  - Affichage de l'image miniature de la vidéo pour confirmation visuelle.
-  - Bouton pour obtenir les notes détaillées, déclenchant l'extraction de la transcription, la génération de contenu, et l'affichage des notes détaillées dans l'application Streamlit.
+
+
+
+
+
+
+
 
 
 
