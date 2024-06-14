@@ -1,41 +1,3 @@
-# Résumé : 
-
-### Environnement virtuel personnalisé :
-
-
-```
-conda create -p venv python==3.12 -y
-```
-le ```-p``` signifie que l'environnement est personnalisé et est associé au dossier de travail
-
-
-
-Activer l'environement, comme l'environement est stocké dans le dossier, il faut l'indiquer quand on active l'environnement
-```
-conda activate /Users/fanchdaniel/mes_documents/dev/gen-ai-gemini/youtube-summarizer/venv
-```
-
-
-
-### Nom du projet google cloud
-```
- youtube-summarizer-426315 
-```
-
-### Clé API
-```
-AIzaSyADRWbFM8OggqGzTfVf0_zgEGLa6QKZHX0
-```
-
-
-###
-Installation des requirements : 
-```
-pip install -r requirements.txt
-```
-
-
-----------------------
 
 
 ## 1 - Présentation du projet
@@ -47,8 +9,6 @@ pip install -r requirements.txt
 Le projet "Transcripteur de vidéos YouTube" vise à simplifier le processus d'extraction de texte à partir de vidéos YouTube. En fournissant simplement le lien d'une vidéo, l'application sera capable de récupérer automatiquement la transcription complète. Cette fonctionnalité est particulièrement utile pour les créateurs de contenu, les chercheurs et toute personne souhaitant analyser le contenu des vidéos de manière textuelle. 
 
 Dans cette documentation, nous allons détailler chaque étape du développement de ce projet, des configurations initiales à l'implémentation des fonctionnalités clés, en passant par l'intégration d'interfaces utilisateur conviviales.
-
-
 
 
 
@@ -423,7 +383,7 @@ if st.button("Obtenir les notes détaillées"):
 Le projet "Transcripteur de vidéos YouTube" offre une solution complète pour l'extraction automatique et la génération de résumés de transcriptions de vidéos YouTube. Voici un résumé des fonctionnalités développées :
 
 * **Création de l'environnement :**
-  - Utilisation de Conda pour créer un environnement isolé avec Python 3.10.
+  - Utilisation de Conda pour créer un environnement isolé avec Python 3.12
   - Création des fichiers nécessaires (.env, requirements.txt, app.py) pour organiser le projet.
 
 * **Configuration des variables d'environnement :**
